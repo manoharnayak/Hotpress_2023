@@ -55,7 +55,7 @@ double Setpointtopex, Inputtopex, Outputtopex;
 
 double Kpbot=300, Kibot=0, Kdbot=0;
 double Kptop=300, Kitop=0, Kdtop=0;
-double kpbotex=200, kibotex=0, kdbotex=0;
+double kpbotex=300, kibotex=0, kdbotex=0;
 double kptopex=300, kitopex=0, kdtopex=0;
 
 PID myPIDbot(&Inputbot, &Outputbot, &Setpointbot, Kpbot, Kibot, Kdbot, DIRECT);
