@@ -323,12 +323,12 @@ void setup()
 
   pinMode(47, INPUT); // D3 switching output data from Pressure Regulator
 
-  digitalWrite(RELAY_PINK1, HIGH);
-  digitalWrite(RELAY_PINK2, HIGH);
-  digitalWrite(RELAY_PINK3, HIGH);
-  digitalWrite(RELAY_PINK4, HIGH);
-  digitalWrite(RELAY_PINK5, HIGH);
-  digitalWrite(RELAY_PINK6, HIGH);
+  digitalWrite(RELAY_PINK1, LOW);
+  digitalWrite(RELAY_PINK2, LOW);
+  digitalWrite(RELAY_PINK3, LOW);
+  digitalWrite(RELAY_PINK4, LOW);
+  digitalWrite(RELAY_PINK5, LOW);
+  digitalWrite(RELAY_PINK6, LOW);
 
   //PWM set up
 
@@ -395,34 +395,34 @@ void loop()
 //set relay states
 
   if (pistonposition == 1){
-    digitalWrite(RELAY_PINK5, HIGH);
-    digitalWrite(RELAY_PINK4, LOW);
+    digitalWrite(RELAY_PINK5, LOW);
+    digitalWrite(RELAY_PINK4, HIGH);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
   } 
 
   else if (pistonposition==2){
-    digitalWrite(RELAY_PINK4, HIGH);
-    digitalWrite(RELAY_PINK5, LOW);
+    digitalWrite(RELAY_PINK4, LOW);
+    digitalWrite(RELAY_PINK5, HIGH);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
   }
 
   else if (pistonposition == 0){
-    digitalWrite(RELAY_PINK4, HIGH);
-    digitalWrite(RELAY_PINK5, HIGH);
+    digitalWrite(RELAY_PINK4, LOW);
+    digitalWrite(RELAY_PINK5, LOW);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
   }
 
   
   if (coolerstate==0){
-    digitalWrite(RELAY_PINK6, HIGH);
+    digitalWrite(RELAY_PINK6, LOW);
     gslc_ElemSetCol(&m_gui,K6,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,cooler,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
   }
   else if (coolerstate==1){
-    digitalWrite(RELAY_PINK6, LOW);
+    digitalWrite(RELAY_PINK6, HIGH);
     gslc_ElemSetCol(&m_gui,K6,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,cooler,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
   }
@@ -440,11 +440,11 @@ void loop()
     gslc_ElemSetCol(&m_gui,HEATING,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
     gslc_ElemSetTxtCol(&m_gui,HEATING,GSLC_COL_RED);
 
-    digitalWrite(RELAY_PINK1, HIGH);
+    digitalWrite(RELAY_PINK1, LOW);
     gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
-    digitalWrite(RELAY_PINK2, HIGH);
+    digitalWrite(RELAY_PINK2, LOW);
     gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
-    digitalWrite(RELAY_PINK3, HIGH);
+    digitalWrite(RELAY_PINK3, LOW);
     gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
   }
   else if(heatingstate==1){
@@ -505,23 +505,23 @@ void loop()
     gslc_ElemSetTxtCol(&m_gui,HEATING,GSLC_COL_BLACK);
 
     if (heatingstateK1and2==0){
-      digitalWrite(RELAY_PINK1, HIGH);
+      digitalWrite(RELAY_PINK1, LOW);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
-      digitalWrite(RELAY_PINK2, HIGH);
+      digitalWrite(RELAY_PINK2, LOW);
       gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     }
     else if (heatingstateK1and2==1){
-      digitalWrite(RELAY_PINK1, LOW);
+      digitalWrite(RELAY_PINK1, HIGH);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
-      digitalWrite(RELAY_PINK2, LOW);
+      digitalWrite(RELAY_PINK2, HIGH);
       gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
     if (heatingstateK3==0){
-      digitalWrite(RELAY_PINK3, HIGH);
+      digitalWrite(RELAY_PINK3, LOW);
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     }
     else if (heatingstateK3==1){
-      digitalWrite(RELAY_PINK3, LOW);
+      digitalWrite(RELAY_PINK3, HIGH);
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
   }
