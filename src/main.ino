@@ -78,6 +78,9 @@ int heatingstateK3 = 0;
 int useexternalTtop = 0;
 int useexternalTbot = 0;
 int showForce = 0;
+int topsafetoheat = 0;
+int botsafetoheat = 0;
+
 
 
 
@@ -261,12 +264,18 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
         break;
       case E_ELEM_BTN10_COOLER:
         coolerstate++;
+        if (coolerstate == 1){
+          heatingstate = 0;
+        }
         if (coolerstate == 2){
           coolerstate = 0;
         }
         break;
       case E_ELEM_BTN11_HEATING:
         heatingstate++;
+        if (heatingstate == 1){
+          coolerstate = 0;
+        }
         if (heatingstate == 2){
           heatingstate = 0;
         }
@@ -392,6 +401,155 @@ void loop()
   Force = round(Force);
   Force = 100 * Force;
 
+  //read temperatures from NTCs
+  totalt1temp = totalt1temp - readingst1temp[t1tempreadIndex];
+  readingst1temp[t1tempreadIndex] = analogRead(tt1);
+  totalt1temp = totalt1temp + readingst1temp[t1tempreadIndex];
+  t1tempreadIndex++;
+  if (t1tempreadIndex >= numReadings) t1tempreadIndex = 0;
+  averaget1temp = totalt1temp / numReadings;
+  if (averaget1temp>0) t1temp = Thermistor(averaget1temp);
+  if (t1temp > 0 && t1temp < 260){t1 = t1temp;}
+  
+  totalt2temp = totalt2temp - readingst2temp[t2tempreadIndex];
+  readingst2temp[t2tempreadIndex] = analogRead(tt2);
+  totalt2temp = totalt2temp + readingst2temp[t2tempreadIndex];
+  t2tempreadIndex++;
+  if (t2tempreadIndex >= numReadings) t2tempreadIndex = 0;
+  averaget2temp = totalt2temp / numReadings;
+  if (averaget2temp>0) t2temp = Thermistor(averaget2temp);
+  if (t2temp > 0 && t2temp < 260){t2 = t2temp;}
+
+  totalt3temp = totalt3temp - readingst3temp[t3tempreadIndex];
+  readingst3temp[t3tempreadIndex] = analogRead(tt3);
+  totalt3temp = totalt3temp + readingst3temp[t3tempreadIndex];
+  t3tempreadIndex++;
+  if (t3tempreadIndex >= numReadings) t3tempreadIndex = 0;
+  averaget3temp = totalt3temp / numReadings;
+  if (averaget3temp>0) t3temp = Thermistor(averaget3temp);
+  if (t3temp > 0 && t3temp < 260){t3 = t3temp;}
+
+  totalt4temp = totalt4temp - readingst4temp[t4tempreadIndex];
+  readingst4temp[t4tempreadIndex] = analogRead(tt4);
+  totalt4temp = totalt4temp + readingst4temp[t4tempreadIndex];
+  t4tempreadIndex++;
+  if (t4tempreadIndex >= numReadings) t4tempreadIndex = 0;
+  averaget4temp = totalt4temp / numReadings;
+  if (averaget4temp>0) t4temp = Thermistor(averaget4temp);
+  if (t4temp > 0 && t4temp < 260){t4 = t4temp;}
+
+  totalt5temp = totalt5temp - readingst5temp[t5tempreadIndex];
+  readingst5temp[t5tempreadIndex] = analogRead(tt5);
+  totalt5temp = totalt5temp + readingst5temp[t5tempreadIndex];
+  t5tempreadIndex++;
+  if (t5tempreadIndex >= numReadings) t5tempreadIndex = 0;
+  averaget5temp = totalt5temp / numReadings;
+  if (averaget5temp>0) t5temp = Thermistor(averaget5temp);
+  if (t5temp > 0 && t5temp < 260){t5 = t5temp;}
+
+  totalt6temp = totalt6temp - readingst6temp[t6tempreadIndex];
+  readingst6temp[t6tempreadIndex] = analogRead(tt6);
+  totalt6temp = totalt6temp + readingst6temp[t6tempreadIndex];
+  t6tempreadIndex++;
+  if (t6tempreadIndex >= numReadings) t6tempreadIndex = 0;
+  averaget6temp = totalt6temp / numReadings;
+  if (averaget6temp>0) t6temp = Thermistor(averaget6temp);
+  if (t6temp > 0 && t6temp < 260){t6 = t6temp;}
+
+//end read temperatures block
+
+//Take Poti Values and set
+
+    totaltempFloat1 = totaltempFloat1 - readingstempFloat1[tempFloat1readIndex];
+    readingstempFloat1[tempFloat1readIndex] = analogRead(A15);
+    totaltempFloat1 = totaltempFloat1 + readingstempFloat1[tempFloat1readIndex];
+    tempFloat1readIndex++;
+    if (tempFloat1readIndex >= numReadings) tempFloat1readIndex = 0;
+    averagetempFloat1 = totaltempFloat1 / numReadings;
+    OCR5B = (averagetempFloat1/1023) * 60000;
+
+
+    totaltempFloat2 = totaltempFloat2 - readingstempFloat2[tempFloat2readIndex];
+    readingstempFloat2[tempFloat2readIndex] = analogRead(A6);
+    totaltempFloat2 = totaltempFloat2 + readingstempFloat2[tempFloat2readIndex];
+    tempFloat2readIndex++;
+    if (tempFloat2readIndex >= numReadings) tempFloat2readIndex = 0;
+    averagetempFloat2 = totaltempFloat2 / numReadings;
+    float newSETTOP = (averagetempFloat2/1023) * 260;
+
+    totaltempFloat3 = totaltempFloat3 - readingstempFloat3[tempFloat3readIndex];
+    readingstempFloat3[tempFloat3readIndex] = analogRead(A7);
+    totaltempFloat3 = totaltempFloat3 + readingstempFloat3[tempFloat3readIndex];
+    tempFloat3readIndex++;
+    if (tempFloat3readIndex >= numReadings) tempFloat3readIndex = 0;
+    averagetempFloat3 = totaltempFloat3 / numReadings;
+    float newSETBOT = (averagetempFloat3/1023) * 260;
+    
+    totaltempFloat4 = totaltempFloat4 - readingstempFloat4[tempFloat4readIndex];
+    readingstempFloat4[tempFloat4readIndex] = analogRead(A14);
+    totaltempFloat4 = totaltempFloat4 + readingstempFloat4[tempFloat4readIndex];
+    tempFloat4readIndex++;
+    if (tempFloat4readIndex >= numReadings) tempFloat4readIndex = 0;
+    averagetempFloat4 = totaltempFloat4 / numReadings;
+    float newPressure = 1.02*((averagetempFloat4/1023) * maxPressure); //correction factor 1.02
+
+    runEvery(700){
+
+      if (Setpointbot != newSETBOT){
+        Setpointbot = newSETBOT;
+        Setpointbotex = newSETBOT;
+        dtostrf(newSETBOT, 3,0, tbuffer);
+        sprintf(tbuffer, "%s", tbuffer);
+        gslc_ElemSetTxtStr(&m_gui, Tbotset, tbuffer);
+      }
+      
+      if (Setpointtop != newSETTOP){
+        Setpointtop = newSETTOP;
+        Setpointtopex = newSETTOP;
+        dtostrf(newSETTOP, 3,0, tbuffer);
+        sprintf(tbuffer, "%s", tbuffer);
+        gslc_ElemSetTxtStr(&m_gui, Ttopset, tbuffer);
+      }
+      if (actPressure != newPressure){
+         actPressure = newPressure;
+         if (actPressure>9.9){ actPressure = 9.9;}
+         if (showForce==0){
+            dtostrf(newPressure, 3,1, tbuffer);
+            sprintf(tbuffer, "%s", tbuffer);
+            gslc_ElemSetTxtStr(&m_gui, Psetp, tbuffer);
+            gslc_ElemSetTxtStr(&m_gui, SETPLABEL, "Pressure(Bar)");
+
+         }
+         if (showForce==1){
+            dtostrf(Force,4,0,tbuffer);
+            sprintf(tbuffer, "%s", tbuffer);
+            gslc_ElemSetTxtStr(&m_gui, Psetp, tbuffer);
+            gslc_ElemSetTxtStr(&m_gui, SETPLABEL, "Force (N)");
+          }
+      }
+    } 
+  
+
+//end poti value set block
+
+//software stop for temperature overshoot
+int tempdifftop = t3 - Setpointtop;
+int tempdifftopcheck = t4 - Setpointtop;
+if (tempdifftop < tempdifftopcheck){tempdifftop = tempdifftopcheck;}
+tempdifftopcheck = t5 - Setpointtop;
+if (tempdifftop < tempdifftopcheck){tempdifftop = tempdifftopcheck;}
+int tempdiffbot = t1 - Setpointbot;
+int tempdiffbotcheck = t2 - Setpointbot;
+if (tempdiffbot < tempdiffbotcheck){tempdiffbot = tempdiffbotcheck;}
+tempdiffbotcheck = t6 - Setpointbot;
+if (tempdiffbot < tempdiffbotcheck){tempdiffbot = tempdiffbotcheck;}
+
+if (tempdifftop < 0){topsafetoheat = 1;}
+if (tempdiffbot >= 0){topsafetoheat = 0;}
+if (tempdiffbot < 0){botsafetoheat = 1;}
+if (tempdifftop >= 0){botsafetoheat = 0;}
+
+
 //set relay states
 
   if (pistonposition == 1){
@@ -510,7 +668,7 @@ void loop()
       digitalWrite(RELAY_PINK2, LOW);
       gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     }
-    else if (heatingstateK1and2==1){
+    else if (heatingstateK1and2==1 && botsafetoheat==1){
       digitalWrite(RELAY_PINK1, HIGH);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
       digitalWrite(RELAY_PINK2, HIGH);
@@ -520,7 +678,7 @@ void loop()
       digitalWrite(RELAY_PINK3, LOW);
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     }
-    else if (heatingstateK3==1){
+    else if (heatingstateK3==1 && topsafetoheat==1){
       digitalWrite(RELAY_PINK3, HIGH);
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
@@ -530,143 +688,8 @@ void loop()
   //end set relay states
 
   
-  //Take Poti Values and set
-  // runEvery(500){
-    totaltempFloat1 = totaltempFloat1 - readingstempFloat1[tempFloat1readIndex];
-    readingstempFloat1[tempFloat1readIndex] = analogRead(A15);
-    totaltempFloat1 = totaltempFloat1 + readingstempFloat1[tempFloat1readIndex];
-    tempFloat1readIndex++;
-    if (tempFloat1readIndex >= numReadings) tempFloat1readIndex = 0;
-    averagetempFloat1 = totaltempFloat1 / numReadings;
-    OCR5B = (averagetempFloat1/1023) * 60000;
-
-
-    totaltempFloat2 = totaltempFloat2 - readingstempFloat2[tempFloat2readIndex];
-    readingstempFloat2[tempFloat2readIndex] = analogRead(A6);
-    totaltempFloat2 = totaltempFloat2 + readingstempFloat2[tempFloat2readIndex];
-    tempFloat2readIndex++;
-    if (tempFloat2readIndex >= numReadings) tempFloat2readIndex = 0;
-    averagetempFloat2 = totaltempFloat2 / numReadings;
-    float newSETTOP = (averagetempFloat2/1023) * 260;
-
-    totaltempFloat3 = totaltempFloat3 - readingstempFloat3[tempFloat3readIndex];
-    readingstempFloat3[tempFloat3readIndex] = analogRead(A7);
-    totaltempFloat3 = totaltempFloat3 + readingstempFloat3[tempFloat3readIndex];
-    tempFloat3readIndex++;
-    if (tempFloat3readIndex >= numReadings) tempFloat3readIndex = 0;
-    averagetempFloat3 = totaltempFloat3 / numReadings;
-    float newSETBOT = (averagetempFloat3/1023) * 260;
-    
-    totaltempFloat4 = totaltempFloat4 - readingstempFloat4[tempFloat4readIndex];
-    readingstempFloat4[tempFloat4readIndex] = analogRead(A14);
-    totaltempFloat4 = totaltempFloat4 + readingstempFloat4[tempFloat4readIndex];
-    tempFloat4readIndex++;
-    if (tempFloat4readIndex >= numReadings) tempFloat4readIndex = 0;
-    averagetempFloat4 = totaltempFloat4 / numReadings;
-    float newPressure = 1.02*((averagetempFloat4/1023) * maxPressure); //correction factor 1.02
-
-    runEvery(700){
-
-      if (Setpointbot != newSETBOT){
-        Setpointbot = newSETBOT;
-        Setpointbotex = newSETBOT;
-        dtostrf(newSETBOT, 3,0, tbuffer);
-        sprintf(tbuffer, "%s", tbuffer);
-        gslc_ElemSetTxtStr(&m_gui, Tbotset, tbuffer);
-      }
-      
-      if (Setpointtop != newSETTOP){
-        Setpointtop = newSETTOP;
-        Setpointtopex = newSETTOP;
-        dtostrf(newSETTOP, 3,0, tbuffer);
-        sprintf(tbuffer, "%s", tbuffer);
-        gslc_ElemSetTxtStr(&m_gui, Ttopset, tbuffer);
-      }
-      if (actPressure != newPressure){
-         actPressure = newPressure;
-         if (actPressure>9.9){ actPressure = 9.9;}
-         if (showForce==0){
-            dtostrf(newPressure, 3,1, tbuffer);
-            sprintf(tbuffer, "%s", tbuffer);
-            gslc_ElemSetTxtStr(&m_gui, Psetp, tbuffer);
-            gslc_ElemSetTxtStr(&m_gui, SETPLABEL, "Pressure(Bar)");
-
-         }
-         if (showForce==1){
-            dtostrf(Force,4,0,tbuffer);
-            sprintf(tbuffer, "%s", tbuffer);
-            gslc_ElemSetTxtStr(&m_gui, Psetp, tbuffer);
-            gslc_ElemSetTxtStr(&m_gui, SETPLABEL, "Force (N)");
-          }
-      }
-    } 
-  // }
-
-  //end poti value set block
-
-  //read temperatures from NTCs
-
-
   
 
-  totalt1temp = totalt1temp - readingst1temp[t1tempreadIndex];
-  readingst1temp[t1tempreadIndex] = analogRead(tt1);
-  totalt1temp = totalt1temp + readingst1temp[t1tempreadIndex];
-  t1tempreadIndex++;
-  if (t1tempreadIndex >= numReadings) t1tempreadIndex = 0;
-  averaget1temp = totalt1temp / numReadings;
-  if (averaget1temp>0) t1temp = Thermistor(averaget1temp);
-  if (t1temp > 0 && t1temp < 260){t1 = t1temp;}
-  
-  totalt2temp = totalt2temp - readingst2temp[t2tempreadIndex];
-  readingst2temp[t2tempreadIndex] = analogRead(tt2);
-  totalt2temp = totalt2temp + readingst2temp[t2tempreadIndex];
-  t2tempreadIndex++;
-  if (t2tempreadIndex >= numReadings) t2tempreadIndex = 0;
-  averaget2temp = totalt2temp / numReadings;
-  if (averaget2temp>0) t2temp = Thermistor(averaget2temp);
-  if (t2temp > 0 && t2temp < 260){t2 = t2temp;}
-
-  totalt3temp = totalt3temp - readingst3temp[t3tempreadIndex];
-  readingst3temp[t3tempreadIndex] = analogRead(tt3);
-  totalt3temp = totalt3temp + readingst3temp[t3tempreadIndex];
-  t3tempreadIndex++;
-  if (t3tempreadIndex >= numReadings) t3tempreadIndex = 0;
-  averaget3temp = totalt3temp / numReadings;
-  if (averaget3temp>0) t3temp = Thermistor(averaget3temp);
-  if (t3temp > 0 && t3temp < 260){t3 = t3temp;}
-
-  totalt4temp = totalt4temp - readingst4temp[t4tempreadIndex];
-  readingst4temp[t4tempreadIndex] = analogRead(tt4);
-  totalt4temp = totalt4temp + readingst4temp[t4tempreadIndex];
-  t4tempreadIndex++;
-  if (t4tempreadIndex >= numReadings) t4tempreadIndex = 0;
-  averaget4temp = totalt4temp / numReadings;
-  if (averaget4temp>0) t4temp = Thermistor(averaget4temp);
-  if (t4temp > 0 && t4temp < 260){t4 = t4temp;}
-
-  totalt5temp = totalt5temp - readingst5temp[t5tempreadIndex];
-  readingst5temp[t5tempreadIndex] = analogRead(tt5);
-  totalt5temp = totalt5temp + readingst5temp[t5tempreadIndex];
-  t5tempreadIndex++;
-  if (t5tempreadIndex >= numReadings) t5tempreadIndex = 0;
-  averaget5temp = totalt5temp / numReadings;
-  if (averaget5temp>0) t5temp = Thermistor(averaget5temp);
-  if (t5temp > 0 && t5temp < 260){t5 = t5temp;}
-
-  totalt6temp = totalt6temp - readingst6temp[t6tempreadIndex];
-  readingst6temp[t6tempreadIndex] = analogRead(tt6);
-  totalt6temp = totalt6temp + readingst6temp[t6tempreadIndex];
-  t6tempreadIndex++;
-  if (t6tempreadIndex >= numReadings) t6tempreadIndex = 0;
-  averaget6temp = totalt6temp / numReadings;
-  if (averaget6temp>0) t6temp = Thermistor(averaget6temp);
-  if (t6temp > 0 && t6temp < 260){t6 = t6temp;}
-
-
-
-
-  //end read temperatures block
 
   //update display temperatures
   runEvery(700){
