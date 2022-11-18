@@ -64,7 +64,7 @@ PID myPIDbotex(&Inputbotex, &Outputbotex, &Setpointbotex, kpbotex, kibotex, kdbo
 PID myPIDtopex(&Inputtopex, &Outputtopex, &Setpointtopex, kptopex, kitopex, kdtopex, DIRECT);
 
 
-int windowsize = 5000;
+int windowsize = 1000;
 unsigned long windowstarttime;
 
 
