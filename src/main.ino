@@ -545,9 +545,9 @@ tempdiffbotcheck = t6 - Setpointbot;
 if (tempdiffbot < tempdiffbotcheck){tempdiffbot = tempdiffbotcheck;}
 
 if (tempdifftop < 0){topsafetoheat = 1;}
-if (tempdiffbot >= 0){topsafetoheat = 0;}
+if (tempdifftop >= 0){topsafetoheat = 0;}
 if (tempdiffbot < 0){botsafetoheat = 1;}
-if (tempdifftop >= 0){botsafetoheat = 0;}
+if (tempdiffbot >= 0){botsafetoheat = 0;}
 
 
 //set relay states
