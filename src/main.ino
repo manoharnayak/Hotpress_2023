@@ -45,6 +45,12 @@ char tbuffer[50];
 char debugoutX[200];
 
 int pistonposition = 0;
+int datalog = 0;
+word time_t_s = 0;
+word time_elapsed_s = 0;
+char pistonpositionText[8] = "unknown";
+char topheatingstateText[8] = "unknown";
+char botheatingstateText[8] = "unknown";
 
 //PID vars
 
@@ -254,13 +260,36 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
     switch (pElem->nId) {
 //<Button Enums !Start!>
       case E_ELEM_BTN7_PUP:
-        pistonposition = 1;
+        if (pistonposition == 0 || pistonposition == 2){
+          pistonposition = 1;
+        }
+        else if (pistonposition == 1){
+          pistonposition = 0;
+        }
         break;
       case E_ELEM_BTN8_PDOWN:
-        pistonposition = 2;
+        if (pistonposition == 0 || pistonposition == 1){
+          pistonposition = 2;
+        }
+        else if (pistonposition == 2){
+          pistonposition = 0;
+        }
         break;
       case E_ELEM_BTN9_PNULL:
-        pistonposition = 0;
+        if (datalog == 0){
+          Serial.print(millis()/1000);
+          time_t_s = millis()/1000;
+          Serial.println(" data logging started");
+          Serial.println("Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Tool Plate Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Base Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6");
+          datalog = 1;
+        }
+        else if (datalog == 1){
+          Serial.print(millis()/1000);
+          Serial.println(" data logging stopped");
+          datalog = 0;
+        }
+
+
         break;
       case E_ELEM_BTN10_COOLER:
         coolerstate++;
@@ -368,7 +397,7 @@ void setup()
 
   // begin serial comm with usb and wifi  
   Serial.begin(115200);
-  Serial3.begin(115200);
+  // Serial3.begin(115200);
   delay(1000);
 
 
@@ -662,7 +691,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     gslc_ElemSetCol(&m_gui,HEATING,GSLC_COL_BLUE_DK4,GSLC_COL_RED,GSLC_COL_BLUE_DK4);
     gslc_ElemSetTxtCol(&m_gui,HEATING,GSLC_COL_BLACK);
 
-    if (heatingstateK1and2==0){
+    if (heatingstateK1and2==0 || botsafetoheat==0){
       digitalWrite(RELAY_PINK1, LOW);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
       digitalWrite(RELAY_PINK2, LOW);
@@ -674,7 +703,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       digitalWrite(RELAY_PINK2, HIGH);
       gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
-    if (heatingstateK3==0){
+    if (heatingstateK3==0 || topsafetoheat==0){
       digitalWrite(RELAY_PINK3, LOW);
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     }
@@ -748,12 +777,67 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
   //end temperature control
 
   runEvery(5000){
-    Serial.println(t5);
-    Serial.println(t6);
-    Serial.println(Force);
-    Serial.println(actPressure);
-    Serial.println(pistonposition);
-    Serial.println("---------------");
+    time_elapsed_s = (millis() / 1000) - time_t_s;
+    if (newPressure > 1.5 && pistonposition == 1){
+      strcpy (pistonpositionText, "up     ");
+    }
+    else if (newPressure <= 1.5 && newPressure >= 1.0 && pistonposition == 1){
+      strcpy (pistonpositionText, "unknown");
+    }
+    else {
+      strcpy (pistonpositionText, "down   ");
+    }
+    if (heatingstateK1and2 == 1){
+      strcpy (topheatingstateText, "on ");
+    }
+    else {
+      strcpy (topheatingstateText, "off");
+    }
+    if (heatingstateK3 == 1){
+      strcpy (botheatingstateText, "on ");
+    }
+    else {
+      strcpy (botheatingstateText, "off");
+    }
+    if (datalog == 1){
+      Serial.print("");
+
+    }
+  Serial.print(time_elapsed_s);
+  Serial.print(", ");
+  Serial.print(t4);
+  Serial.print(", ");
+  Serial.print(t3);
+  Serial.print(", ");
+  Serial.print(t5);
+  Serial.print(", ");
+  Serial.print(t6);
+  Serial.print(", ");
+  Serial.print(t2);
+  Serial.print(", ");
+  Serial.print(t1);
+  Serial.print(", ");
+  Serial.print("NA");
+  Serial.print(", ");
+  Serial.print("newPressure");
+  Serial.print(", ");
+  Serial.print(pistonpositionText);
+  Serial.print(", ");
+  Serial.print(topheatingstateText);
+  Serial.print(", ");
+  Serial.print(botheatingstateText);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK1);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK2);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK3);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK4);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK5);
+  Serial.print(", ");
+  Serial.print(RELAY_PINK6);
   }
   // ------------------------------------------------
   // Update GUI Elements
