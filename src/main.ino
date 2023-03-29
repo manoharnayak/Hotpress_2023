@@ -282,11 +282,13 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
           Serial.println(" data logging started");
           Serial.println("Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Tool Plate Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Base Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6");
           datalog = 1;
+          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
         }
         else if (datalog == 1){
           Serial.print(millis()/1000);
           Serial.println(" data logging stopped");
           datalog = 0;
+          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4); 
         }
 
 
@@ -586,6 +588,8 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     digitalWrite(RELAY_PINK4, HIGH);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
+    gslc_ElemSetCol(&m_gui,Pup,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
+    gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4); 
   } 
 
   else if (pistonposition==2){
@@ -593,6 +597,8 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     digitalWrite(RELAY_PINK5, HIGH);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pup,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
   }
 
   else if (pistonposition == 0){
@@ -600,6 +606,8 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     digitalWrite(RELAY_PINK5, LOW);
     gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pup,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
   }
 
   
@@ -838,6 +846,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
   Serial.print(RELAY_PINK5);
   Serial.print(", ");
   Serial.print(RELAY_PINK6);
+  Serial.println(" ");
   }
   // ------------------------------------------------
   // Update GUI Elements
