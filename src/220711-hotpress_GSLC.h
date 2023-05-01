@@ -203,7 +203,7 @@ void InitGUIslice_gen()
   
   // Create E_ELEM_TEXT20_TBOT2 text label
   pElemRef = gslc_ElemCreateTxt(&m_gui,E_ELEM_TEXT20_TBOT2,E_PG_MAIN,(gslc_tsRect){224,160,192,32},
-    (char*)"Base Plate T (C)",0,E_BUILTIN10X16);
+    (char*)"Water Tank T (C)",0,E_BUILTIN10X16);
   gslc_ElemSetFrameEn(&m_gui,pElemRef,true);
   gslc_ElemSetCol(&m_gui,pElemRef,GSLC_COL_BLUE_DK4,GSLC_COL_BLACK,GSLC_COL_BLACK);
   

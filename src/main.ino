@@ -27,12 +27,14 @@
 #define runEvery(t) for (static uint16_t _lasttime;\
                          (uint16_t)((uint16_t)millis() - _lasttime) >= (t);\
                          _lasttime += (t))
-#define RELAY_PINK1 48 // Bottom heater pair 1
-#define RELAY_PINK2 49 // Bottom heater pair 2
-#define RELAY_PINK3 50 // Top heater pair
+#define RELAY_PINK1 48 // Bottom heating elements - DIN Rail pins 6,8,10 - Live 230V through SSR Relay K1, Fuse, safety switches (including thermal check), and main switch
+#define RELAY_PINK2 49 // Inactive
+#define RELAY_PINK3 50 // Top heating elements - DIN Rail pins 12,14,16 - Live 230V through SSR Relay K3, Fuse, safety switches (including thermal check), and main switch
 #define RELAY_PINK4 51 // piston valve retract
 #define RELAY_PINK5 52 // piston valve extend
 #define RELAY_PINK6 53 // cooler
+
+//DIN Rail pins 5,7,9,11,13,15 are shorted to neutral
 
 
 
@@ -97,7 +99,7 @@ int t3 = 20;
 int t4 = 20;
 int t5 = 20;
 int t6 = 20;
-int tt1 = A8; //internal base plate sensor
+int tt1 = A8; //Water Tank sensor
 int tt2 = A9; //internal bottom plate sensor
 int tt3 = A10; //internal top plate sensor
 int tt4 = A11; //internal piston plate sensor
@@ -280,7 +282,7 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
           Serial.print(millis()/1000);
           time_t_s = millis()/1000;
           Serial.println(" data logging started");
-          Serial.println("Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Tool Plate Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Base Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6");
+          Serial.println("Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Tool Plate Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6");
           datalog = 1;
           gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
         }
@@ -440,7 +442,7 @@ void loop()
   if (t1tempreadIndex >= numReadings) t1tempreadIndex = 0;
   averaget1temp = totalt1temp / numReadings;
   if (averaget1temp>0) t1temp = Thermistor(averaget1temp);
-  if (t1temp > 0 && t1temp < 260){t1 = t1temp;}
+  if (t1temp > 0 && t1temp < 300){t1 = t1temp;}
   
   totalt2temp = totalt2temp - readingst2temp[t2tempreadIndex];
   readingst2temp[t2tempreadIndex] = analogRead(tt2);
@@ -449,7 +451,7 @@ void loop()
   if (t2tempreadIndex >= numReadings) t2tempreadIndex = 0;
   averaget2temp = totalt2temp / numReadings;
   if (averaget2temp>0) t2temp = Thermistor(averaget2temp);
-  if (t2temp > 0 && t2temp < 260){t2 = t2temp;}
+  if (t2temp > 0 && t2temp < 300){t2 = t2temp;}
 
   totalt3temp = totalt3temp - readingst3temp[t3tempreadIndex];
   readingst3temp[t3tempreadIndex] = analogRead(tt3);
@@ -458,7 +460,7 @@ void loop()
   if (t3tempreadIndex >= numReadings) t3tempreadIndex = 0;
   averaget3temp = totalt3temp / numReadings;
   if (averaget3temp>0) t3temp = Thermistor(averaget3temp);
-  if (t3temp > 0 && t3temp < 260){t3 = t3temp;}
+  if (t3temp > 0 && t3temp < 300){t3 = t3temp;}
 
   totalt4temp = totalt4temp - readingst4temp[t4tempreadIndex];
   readingst4temp[t4tempreadIndex] = analogRead(tt4);
@@ -467,7 +469,7 @@ void loop()
   if (t4tempreadIndex >= numReadings) t4tempreadIndex = 0;
   averaget4temp = totalt4temp / numReadings;
   if (averaget4temp>0) t4temp = Thermistor(averaget4temp);
-  if (t4temp > 0 && t4temp < 260){t4 = t4temp;}
+  if (t4temp > 0 && t4temp < 300){t4 = t4temp;}
 
   totalt5temp = totalt5temp - readingst5temp[t5tempreadIndex];
   readingst5temp[t5tempreadIndex] = analogRead(tt5);
@@ -476,7 +478,7 @@ void loop()
   if (t5tempreadIndex >= numReadings) t5tempreadIndex = 0;
   averaget5temp = totalt5temp / numReadings;
   if (averaget5temp>0) t5temp = Thermistor(averaget5temp);
-  if (t5temp > 0 && t5temp < 260){t5 = t5temp;}
+  if (t5temp > 0 && t5temp < 300){t5 = t5temp;}
 
   totalt6temp = totalt6temp - readingst6temp[t6tempreadIndex];
   readingst6temp[t6tempreadIndex] = analogRead(tt6);
@@ -485,7 +487,7 @@ void loop()
   if (t6tempreadIndex >= numReadings) t6tempreadIndex = 0;
   averaget6temp = totalt6temp / numReadings;
   if (averaget6temp>0) t6temp = Thermistor(averaget6temp);
-  if (t6temp > 0 && t6temp < 260){t6 = t6temp;}
+  if (t6temp > 0 && t6temp < 300){t6 = t6temp;}
 
 //end read temperatures block
 
@@ -708,8 +710,8 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     else if (heatingstateK1and2==1 && botsafetoheat==1){
       digitalWrite(RELAY_PINK1, HIGH);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
-      digitalWrite(RELAY_PINK2, HIGH);
-      gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
+      // digitalWrite(RELAY_PINK2, HIGH);
+      // gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
     if (heatingstateK3==0 || topsafetoheat==0){
       digitalWrite(RELAY_PINK3, LOW);
@@ -824,8 +826,6 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
   Serial.print(t2);
   Serial.print(", ");
   Serial.print(t1);
-  Serial.print(", ");
-  Serial.print("NA");
   Serial.print(", ");
   Serial.print("newPressure");
   Serial.print(", ");
