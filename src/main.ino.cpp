@@ -1,17 +1,7 @@
-//<App !Start!>
-// FILE: [220711-hotpress.ino]
-// Created by GUIslice Builder version: [0.17.b11]
-//
-// GUIslice Builder Generated File
-//
-// For the latest guides, updates and support view:
-// https://github.com/ImpulseAdventure/GUIslice
-//
-//<App !End!>
-
-// ------------------------------------------------
-// Headers to include
-// ------------------------------------------------
+# 1 "C:\\Users\\MANOHA~1.NAY\\AppData\\Local\\Temp\\tmpjls70k6c"
+#include <Arduino.h>
+# 1 "C:/Projects/Hotpress_2023/src/main.ino"
+# 15 "C:/Projects/Hotpress_2023/src/main.ino"
 #include "220711-hotpress_GSLC.h"
 #include <Vcc.h>
 #include <EEPROM.h>
@@ -20,29 +10,20 @@
 
 
 
-// ------------------------------------------------
-// Program Globals
-// ------------------------------------------------
+
+
+
 
 #define runEvery(t) for (static uint16_t _lasttime;\
                          (uint16_t)((uint16_t)millis() - _lasttime) >= (t);\
                          _lasttime += (t))
-#define RELAY_PINK1 48 // Bottom heating elements - DIN Rail pins 6,8,10 - Live 230V through SSR Relay K1, Fuse, safety switches (including thermal check), and main switch
-#define RELAY_PINK2 49 // Inactive
-#define RELAY_PINK3 50 // Top heating elements - DIN Rail pins 12,14,16 - Live 230V through SSR Relay K3, Fuse, safety switches (including thermal check), and main switch
-#define RELAY_PINK4 51 // piston valve retract
-#define RELAY_PINK5 52 // piston valve extend
-#define RELAY_PINK6 53 // cooler
-
-//DIN Rail pins 5,7,9,11,13,15 are shorted to neutral
-
-
-
-
-
-
-//char *dtostrf(double val, signed char width, unsigned char prec, char *s);
-
+#define RELAY_PINK1 48
+#define RELAY_PINK2 49
+#define RELAY_PINK3 50
+#define RELAY_PINK4 51
+#define RELAY_PINK5 52
+#define RELAY_PINK6 53
+# 46 "C:/Projects/Hotpress_2023/src/main.ino"
 char tbuffer[50];
 char debugoutX[200];
 
@@ -54,7 +35,7 @@ char pistonpositionText[8] = "unknown";
 char topheatingstateText[8] = "unknown";
 char botheatingstateText[8] = "unknown";
 
-//PID vars
+
 
 double Setpointbot, Inputbot, Outputbot;
 double Setpointtop, Inputtop, Outputtop;
@@ -76,7 +57,7 @@ int windowsize = 1000;
 unsigned long windowstarttime;
 
 
-float maxPressure = 10.0; //in Bar
+float maxPressure = 10.0;
 int Forcefactor = 1000;
 
 int coolerstate = 0;
@@ -99,34 +80,39 @@ int t3 = 20;
 int t4 = 20;
 int t5 = 20;
 int t6 = 20;
-int tt1 = A8; //Water Tank sensor
-int tt2 = A9; //internal bottom plate sensor
-int tt3 = A10; //internal top plate sensor
-int tt4 = A11; //internal piston plate sensor
-int tt5 = A12; //external top plate sensor
-int tt6 = A13; //external bottom plate sensor
-
-//A14 actual pressure in from festo
-//A15 pressure setting from poti
-//A6 SETTOP temperature setting from poti
-//A7 SETBOT temperature setting from poti
+int tt1 = A8;
+int tt2 = A9;
+int tt3 = A10;
+int tt4 = A11;
+int tt5 = A12;
+int tt6 = A13;
 
 
-float vccm = 5.00;                       // check!
-                                        //  and set to the measured Vcc.
-long pad = 2692;                       // voltage divider resistance
-                                        // 
-long thermr = 100000;                   // thermistor nominal resistance
-long Resistance; 
+
+
+
+
+
+float vccm = 5.00;
+
+long pad = 2692;
+
+long thermr = 100000;
+long Resistance;
 int RawADC;
 
 #define runEvery(t) for (static uint16_t _lasttime;\
                          (uint16_t)((uint16_t)millis() - _lasttime) >= (t);\
                          _lasttime += (t))
-
+double Thermistor(int RawADC);
+static int16_t DebugOut(char ch);
+bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY);
+void setup();
+void loop();
+#line 127 "C:/Projects/Hotpress_2023/src/main.ino"
 double Thermistor(int RawADC) {
-  float Resistance;  
-  float Temp;  // Dual-Purpose variable to save space.
+  float Resistance;
+  float Temp;
   float vout;
   vout = vccm*(RawADC/1023.00);
   Resistance=(vout*pad)/(vccm-vout);
@@ -134,18 +120,18 @@ double Thermistor(int RawADC) {
   float kB = 0.000216399730853633;
   float kC = 0.000000092453905203713;
   Temp = log(Resistance);
-  Temp = 1/(kA+(kB*Temp)+(kC*Temp*Temp*Temp));  
-  Temp = Temp - 273.15;  // Convert Kelvin to Celsius        
+  Temp = 1/(kA+(kB*Temp)+(kC*Temp*Temp*Temp));
+  Temp = Temp - 273.15;
   return Temp;
-}            
+}
 
-// ------------------------------------------------
-// Program Globals
-// ------------------------------------------------
 
-const float VccMin   = 0.0;           // Minimum expected Vcc level, in Volts.
-const float VccMax   = 5.1;           // Maximum expected Vcc level, in Volts.
-const float VccCorrection = 4.94/4.71;  // Measured Vcc by multimeter divided by reported Vcc
+
+
+
+const float VccMin = 0.0;
+const float VccMax = 5.1;
+const float VccCorrection = 4.94/4.71;
 Vcc vcc(VccCorrection);
 
 
@@ -153,7 +139,7 @@ int index = 0;
 int intPsetp = 0;
 
 
-//analogsmoothing
+
 const int numReadings = 10;
 
 
@@ -216,51 +202,51 @@ int averaget6temp = 0;
 double Force = 0;
 
 
-// Save some element references for direct access
-//<Save_References !Start!>
-gslc_tsElemRef* HEATING           = NULL;
-gslc_tsElemRef* K1                = NULL;
-gslc_tsElemRef* K2                = NULL;
-gslc_tsElemRef* K3                = NULL;
-gslc_tsElemRef* K4                = NULL;
-gslc_tsElemRef* K5                = NULL;
-gslc_tsElemRef* K6                = NULL;
-gslc_tsElemRef* Pdown             = NULL;
-gslc_tsElemRef* Pnull             = NULL;
-gslc_tsElemRef* Psetp             = NULL;
-gslc_tsElemRef* Pup               = NULL;
-gslc_tsElemRef* SETPLABEL         = NULL;
-gslc_tsElemRef* TBOTSETLABEL      = NULL;
-gslc_tsElemRef* TTOPSETLABEL      = NULL;
-gslc_tsElemRef* Tbot              = NULL;
-gslc_tsElemRef* Tbot2             = NULL;
-gslc_tsElemRef* Tbotex            = NULL;
-gslc_tsElemRef* Tbotset           = NULL;
-gslc_tsElemRef* Tpist             = NULL;
-gslc_tsElemRef* Ttop              = NULL;
-gslc_tsElemRef* Ttopex            = NULL;
-gslc_tsElemRef* Ttopset           = NULL;
-gslc_tsElemRef* cooler            = NULL;
-//<Save_References !End!>
 
-// Define debug message function
+
+gslc_tsElemRef* HEATING = NULL;
+gslc_tsElemRef* K1 = NULL;
+gslc_tsElemRef* K2 = NULL;
+gslc_tsElemRef* K3 = NULL;
+gslc_tsElemRef* K4 = NULL;
+gslc_tsElemRef* K5 = NULL;
+gslc_tsElemRef* K6 = NULL;
+gslc_tsElemRef* Pdown = NULL;
+gslc_tsElemRef* Pnull = NULL;
+gslc_tsElemRef* Psetp = NULL;
+gslc_tsElemRef* Pup = NULL;
+gslc_tsElemRef* SETPLABEL = NULL;
+gslc_tsElemRef* TBOTSETLABEL = NULL;
+gslc_tsElemRef* TTOPSETLABEL = NULL;
+gslc_tsElemRef* Tbot = NULL;
+gslc_tsElemRef* Tbot2 = NULL;
+gslc_tsElemRef* Tbotex = NULL;
+gslc_tsElemRef* Tbotset = NULL;
+gslc_tsElemRef* Tpist = NULL;
+gslc_tsElemRef* Ttop = NULL;
+gslc_tsElemRef* Ttopex = NULL;
+gslc_tsElemRef* Ttopset = NULL;
+gslc_tsElemRef* cooler = NULL;
+
+
+
 static int16_t DebugOut(char ch) { if (ch == (char)'\n') Serial.println(""); else Serial.write(ch); return 0; }
 
-// ------------------------------------------------
-// Callback Methods
-// ------------------------------------------------
-// Common Button callback
+
+
+
+
 bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int16_t nY)
 {
-  // Typecast the parameters to match the GUI and element types
-  gslc_tsGui*     pGui     = (gslc_tsGui*)(pvGui);
+
+  gslc_tsGui* pGui = (gslc_tsGui*)(pvGui);
   gslc_tsElemRef* pElemRef = (gslc_tsElemRef*)(pvElemRef);
-  gslc_tsElem*    pElem    = gslc_GetElemFromRef(pGui,pElemRef);
+  gslc_tsElem* pElem = gslc_GetElemFromRef(pGui,pElemRef);
 
   if ( eTouch == GSLC_TOUCH_UP_IN ) {
-    // From the element's ID we can determine which button was pressed.
+
     switch (pElem->nId) {
-//<Button Enums !Start!>
+
       case E_ELEM_BTN7_PUP:
         if (pistonposition == 0 || pistonposition == 2){
           pistonposition = 1;
@@ -284,13 +270,13 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
           Serial.println(" data logging started");
           Serial.println("Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Goal temperature, Top Tool Plate Temperature, Bottom Goal Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6");
           datalog = 1;
-          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
+          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
         }
         else if (datalog == 1){
           Serial.print(millis()/1000);
           Serial.println(" data logging stopped");
           datalog = 0;
-          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4); 
+          gslc_ElemSetCol(&m_gui,Pnull,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
         }
 
 
@@ -331,31 +317,17 @@ bool CbBtnCommon(void* pvGui,void *pvElemRef,gslc_teTouch eTouch,int16_t nX,int1
           showForce = 0;
         }
         break;
-//<Button Enums !End!>
+
       default:
         break;
     }
   }
   return true;
 }
-//<Checkbox Callback !Start!>
-//<Checkbox Callback !End!>
-//<Keypad Callback !Start!>
-//<Keypad Callback !End!>
-//<Spinner Callback !Start!>
-//<Spinner Callback !End!>
-//<Listbox Callback !Start!>
-//<Listbox Callback !End!>
-//<Draw Callback !Start!>
-//<Draw Callback !End!>
-//<Slider Callback !Start!>
-//<Slider Callback !End!>
-//<Tick Callback !Start!>
-//<Tick Callback !End!>
-
+# 356 "C:/Projects/Hotpress_2023/src/main.ino"
 void setup()
 {
- // Set all RELAY pins to OFF
+
   pinMode(RELAY_PINK1, OUTPUT);
   pinMode(RELAY_PINK2, OUTPUT);
   pinMode(RELAY_PINK3, OUTPUT);
@@ -363,7 +335,7 @@ void setup()
   pinMode(RELAY_PINK5, OUTPUT);
   pinMode(RELAY_PINK6, OUTPUT);
 
-  pinMode(47, INPUT); // D3 switching output data from Pressure Regulator
+  pinMode(47, INPUT);
 
   digitalWrite(RELAY_PINK1, LOW);
   digitalWrite(RELAY_PINK2, LOW);
@@ -372,18 +344,18 @@ void setup()
   digitalWrite(RELAY_PINK5, LOW);
   digitalWrite(RELAY_PINK6, LOW);
 
-  //PWM set up
+
 
 
   pinMode(45, OUTPUT);
   TCCR5A = _BV(COM5B1) | _BV(WGM51);
-  TCCR5B = _BV(WGM53) | _BV(WGM52) | _BV(CS50) ; 
-  OCR5B = 30000; // (should be 50% duty cycle (ocr/icr)
-  ICR5 = 60000; // (should set freq to 267 Hz (16MHz/60000))
+  TCCR5B = _BV(WGM53) | _BV(WGM52) | _BV(CS50) ;
+  OCR5B = 30000;
+  ICR5 = 60000;
 
-  //analogsmoothing setup
 
-  vccm = vcc.Read_Volts(); //reference calibration
+
+  vccm = vcc.Read_Volts();
 
   for (int thisReading = 0; thisReading < numReadings; thisReading++){
     readingstempFloat1[thisReading] = 0;
@@ -396,37 +368,37 @@ void setup()
     readingst4temp[thisReading] = 0;
     readingst5temp[thisReading] = 0;
     readingst6temp[thisReading] = 0;
-  }  
+  }
 
 
-  // begin serial comm with usb and wifi  
+
   Serial.begin(115200);
-  // Serial3.begin(115200);
+
   delay(1000);
 
 
 
 
-  //PID STUFF
-  
+
+
   windowstarttime = millis();
-  
+
   myPIDbot.SetOutputLimits(0,windowsize);
   myPIDtop.SetOutputLimits(0,windowsize);
   myPIDbotex.SetOutputLimits(0,windowsize);
   myPIDtopex.SetOutputLimits(0,windowsize);
 
 
-  // ------------------------------------------------
-  // Create graphic elements
-  // ------------------------------------------------
+
+
+
   InitGUIslice_gen();
 
 }
 
-// -----------------------------------
-// Main event loop
-// -----------------------------------
+
+
+
 void loop()
 {
   Force = actPressure * Forcefactor;
@@ -434,7 +406,7 @@ void loop()
   Force = round(Force);
   Force = 100 * Force;
 
-  //read temperatures from NTCs
+
   totalt1temp = totalt1temp - readingst1temp[t1tempreadIndex];
   readingst1temp[t1tempreadIndex] = analogRead(tt1);
   totalt1temp = totalt1temp + readingst1temp[t1tempreadIndex];
@@ -443,7 +415,7 @@ void loop()
   averaget1temp = totalt1temp / numReadings;
   if (averaget1temp>0) t1temp = Thermistor(averaget1temp);
   if (t1temp > 0 && t1temp < 300){t1 = t1temp;}
-  
+
   totalt2temp = totalt2temp - readingst2temp[t2tempreadIndex];
   readingst2temp[t2tempreadIndex] = analogRead(tt2);
   totalt2temp = totalt2temp + readingst2temp[t2tempreadIndex];
@@ -489,9 +461,9 @@ void loop()
   if (averaget6temp>0) t6temp = Thermistor(averaget6temp);
   if (t6temp > 0 && t6temp < 300){t6 = t6temp;}
 
-//end read temperatures block
 
-//Take Poti Values and set
+
+
 
     totaltempFloat1 = totaltempFloat1 - readingstempFloat1[tempFloat1readIndex];
     readingstempFloat1[tempFloat1readIndex] = analogRead(A15);
@@ -517,14 +489,14 @@ void loop()
     if (tempFloat3readIndex >= numReadings) tempFloat3readIndex = 0;
     averagetempFloat3 = totaltempFloat3 / numReadings;
     float newSETBOT = (averagetempFloat3/1023) * 260;
-    
+
     totaltempFloat4 = totaltempFloat4 - readingstempFloat4[tempFloat4readIndex];
     readingstempFloat4[tempFloat4readIndex] = analogRead(A14);
     totaltempFloat4 = totaltempFloat4 + readingstempFloat4[tempFloat4readIndex];
     tempFloat4readIndex++;
     if (tempFloat4readIndex >= numReadings) tempFloat4readIndex = 0;
     averagetempFloat4 = totaltempFloat4 / numReadings;
-    float newPressure = 1.02*((averagetempFloat4/1023) * maxPressure); //correction factor 1.02
+    float newPressure = 1.02*((averagetempFloat4/1023) * maxPressure);
 
     runEvery(700){
 
@@ -535,7 +507,7 @@ void loop()
         sprintf(tbuffer, "%s", tbuffer);
         gslc_ElemSetTxtStr(&m_gui, Tbotset, tbuffer);
       }
-      
+
       if (Setpointtop != newSETTOP){
         Setpointtop = newSETTOP;
         Setpointtopex = newSETTOP;
@@ -560,12 +532,12 @@ void loop()
             gslc_ElemSetTxtStr(&m_gui, SETPLABEL, "Force (N)");
           }
       }
-    } 
-  
+    }
 
-//end poti value set block
 
-//software stop for temperature overshoot
+
+
+
 int tempdifftop = t3 - Setpointtop;
 int tempdifftopcheck = t4 - Setpointtop;
 if (tempdifftop < tempdifftopcheck){tempdifftop = tempdifftopcheck;}
@@ -583,16 +555,16 @@ if (tempdiffbot < 0){botsafetoheat = 1;}
 if (tempdiffbot >= 0){botsafetoheat = 0;}
 
 
-//set relay states
+
 
   if (pistonposition == 1){
     digitalWrite(RELAY_PINK5, LOW);
     digitalWrite(RELAY_PINK4, HIGH);
     gslc_ElemSetCol(&m_gui,K5,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
-    gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
-    gslc_ElemSetCol(&m_gui,Pup,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4); 
-    gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4); 
-  } 
+    gslc_ElemSetCol(&m_gui,K4,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pup,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
+    gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
+  }
 
   else if (pistonposition==2){
     digitalWrite(RELAY_PINK4, LOW);
@@ -612,7 +584,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     gslc_ElemSetCol(&m_gui,Pdown,GSLC_COL_BLUE_DK4,GSLC_COL_GRAY,GSLC_COL_BLUE_DK4);
   }
 
-  
+
   if (coolerstate==0){
     digitalWrite(RELAY_PINK6, LOW);
     gslc_ElemSetCol(&m_gui,K6,GSLC_COL_BLUE_DK4,GSLC_COL_BROWN,GSLC_COL_BLUE_DK4);
@@ -652,7 +624,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       myPIDbotex.Compute();
 
       if (millis() - windowstarttime > windowsize)
-      { //time to shift the Relay Window
+      {
       windowstarttime += windowsize;
       }
       if (Outputbotex > millis() - windowstarttime) heatingstateK1and2=1;
@@ -665,7 +637,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       myPIDbot.Compute();
 
       if (millis() - windowstarttime > windowsize)
-      { //time to shift the Relay Window
+      {
       windowstarttime += windowsize;
       }
       if (Outputbot > millis() - windowstarttime) heatingstateK1and2=1;
@@ -677,7 +649,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       myPIDtopex.Compute();
 
       if (millis() - windowstarttime > windowsize)
-      { //time to shift the Relay Window
+      {
       windowstarttime += windowsize;
       }
       if (Outputtopex > millis() - windowstarttime) heatingstateK3=1;
@@ -689,13 +661,13 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       myPIDtop.Compute();
 
       if (millis() - windowstarttime > windowsize)
-      { //time to shift the Relay Window
+      {
       windowstarttime += windowsize;
       }
       if (Outputtop > millis() - windowstarttime) heatingstateK3=1;
       else heatingstateK3=0;
     }
-    
+
 
 
     gslc_ElemSetCol(&m_gui,HEATING,GSLC_COL_BLUE_DK4,GSLC_COL_RED,GSLC_COL_BLUE_DK4);
@@ -710,8 +682,8 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
     else if (heatingstateK1and2==1 && botsafetoheat==1){
       digitalWrite(RELAY_PINK1, HIGH);
       gslc_ElemSetCol(&m_gui,K1,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
-      // digitalWrite(RELAY_PINK2, HIGH);
-      // gslc_ElemSetCol(&m_gui,K2,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
+
+
     }
     if (heatingstateK3==0 || topsafetoheat==0){
       digitalWrite(RELAY_PINK3, LOW);
@@ -722,46 +694,38 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       gslc_ElemSetCol(&m_gui,K3,GSLC_COL_BLUE_DK4,GSLC_COL_GREEN,GSLC_COL_BLUE_DK4);
     }
   }
-
-  
-  //end set relay states
-
-  
-  
-
-
-  //update display temperatures
+# 734 "C:/Projects/Hotpress_2023/src/main.ino"
   runEvery(700){
-    dtostrf(t1, 3,0, tbuffer);  
+    dtostrf(t1, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Tbot2, tbuffer);
-    
+
     dtostrf(t2, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Tbot, tbuffer);
-    
+
     dtostrf(t3, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Ttop, tbuffer);
-    
+
     dtostrf(t4, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Tpist, tbuffer);
-    
+
     dtostrf(t5, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Ttopex, tbuffer);
-    
+
     dtostrf(t6, 3,0, tbuffer);
     sprintf(tbuffer, "%s", tbuffer);
     gslc_ElemSetTxtStr(&m_gui, Tbotex, tbuffer);
   }
 
-  //end update display temperatures
 
-  //temperature control
 
-    //set NTC ext/int display
+
+
+
     if (useexternalTbot==0){
       gslc_ElemSetTxtCol(&m_gui,Tbotset,GSLC_COL_ORANGE);
       gslc_ElemSetTxtCol(&m_gui,TBOTSETLABEL,GSLC_COL_ORANGE);
@@ -778,14 +742,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       gslc_ElemSetTxtCol(&m_gui,Ttopset,GSLC_COL_PURPLE);
       gslc_ElemSetTxtCol(&m_gui,TTOPSETLABEL,GSLC_COL_PURPLE);
     }
-
-    //end set NTC ext/int display
-
-    //Graph Ttopset and Tbotset and Ttop/Ttopex and Tbot/Tbotex
-
-  
-  //end temperature control
-
+# 789 "C:/Projects/Hotpress_2023/src/main.ino"
   runEvery(5000){
     time_elapsed_s = (millis() / 1000) - time_t_s;
     if (newPressure > 1.5 && pistonposition == 1){
@@ -851,15 +808,7 @@ if (tempdiffbot >= 0){botsafetoheat = 0;}
       Serial.println(" ");
     }
   }
-  // ------------------------------------------------
-  // Update GUI Elements
-  // ------------------------------------------------
-  
-  //TODO - Add update code for any text, gauges, or sliders
-  
-  // ------------------------------------------------
-  // Periodically call GUIslice update function
-  // ------------------------------------------------
+# 863 "C:/Projects/Hotpress_2023/src/main.ino"
   gslc_Update(&m_gui);
-    
+
 }

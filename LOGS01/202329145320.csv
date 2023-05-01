@@ -1,0 +1,6 @@
+5, data logging started
+Time Elapsed, Piston Plate Temperature, Top Fixed Plate Temperature, Top Tool Plate Temperature, Bottom Tool Plate Temperature, Bottom Fixed Plate Temperature, Base Plate Temperature, Water Tank Temperature, Pressure, Piston Position, Top Heating Status, Bottom Heating Status, K1, K2, K3, K4, K5, K6
+5, 22, 57, 60, 60, 57, 57, NA, 0.00, down   , off, off, 0, 0, 0, 0, 0, 0 
+10, 23, 57, 60, 60, 57, 57, NA, 0.00, down   , off, off, 0, 0, 0, 0, 0, 0 
+15, 23, 57, 60, 60, 57, 57, NA, 0.00, down   , off, off, 0, 0, 0, 0, 0, 0 
+21, data logging stopped
